@@ -66,13 +66,16 @@ func MatchesCondition(listing Listing, filter string) bool {
 }
 
 // SearchListings searches active eBay listings and returns those at or below maxPrice.
-func SearchListings(query string, maxPrice float64, condition string) ([]Listing, error) {
+func SearchListings(query string, maxPrice float64, condition string, binOnly bool) ([]Listing, error) {
 	args := []string{"listings", "--json", "--agent", "--nkw", query}
 	if maxPrice > 0 {
 		args = append(args, "--udhi", strconv.FormatFloat(maxPrice, 'f', 2, 64))
 	}
 	if code := conditionToCode(condition); code != "" {
 		args = append(args, "--lh-item-condition", code)
+	}
+	if binOnly {
+		args = append(args, "--lh-bin", "1")
 	}
 
 	out, stderr, err := run("ebay-pp-cli", args...)

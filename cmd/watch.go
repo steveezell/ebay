@@ -57,7 +57,7 @@ Press Ctrl+C to stop watching.`,
 			ts := time.Now().Format("2006-01-02 15:04:05")
 			newCount := 0
 			for _, card := range cards {
-				listings, err := ebay.SearchListings(card.Query, card.MaxPrice, card.Condition)
+				listings, err := ebay.SearchListings(card.Query, card.MaxPrice, card.Condition, card.BINOnly)
 				if err != nil {
 					fmt.Printf("[%s] Error checking %q: %v\n", ts, card.Name, err)
 					continue

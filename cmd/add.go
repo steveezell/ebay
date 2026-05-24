@@ -13,6 +13,7 @@ var (
 	addCondition string
 	addNotes     string
 	addQuery     string
+	addBINOnly   bool
 )
 
 var addCmd = &cobra.Command{
@@ -42,6 +43,7 @@ specific keywords to find the right listing).`,
 			Query:     query,
 			MaxPrice:  addMaxPrice,
 			Condition: addCondition,
+			BINOnly:   addBINOnly,
 			Notes:     addNotes,
 			Added:     time.Now(),
 		}
@@ -52,7 +54,11 @@ specific keywords to find the right listing).`,
 		if cond == "" {
 			cond = "any"
 		}
-		fmt.Printf("Added to want list: %s\n  Max price: $%.2f  |  Condition: %s\n", name, addMaxPrice, cond)
+		binStr := ""
+		if addBINOnly {
+			binStr = "  |  BIN only"
+		}
+		fmt.Printf("Added to want list: %s\n  Max price: $%.2f  |  Condition: %s%s\n", name, addMaxPrice, cond, binStr)
 		if addNotes != "" {
 			fmt.Printf("  Notes: %s\n", addNotes)
 		}
@@ -65,5 +71,6 @@ func init() {
 	addCmd.Flags().StringVarP(&addCondition, "condition", "c", "", "Condition filter: new, used, refurb, parts (default: any)")
 	addCmd.Flags().StringVarP(&addNotes, "notes", "n", "", "Personal notes (grading, variant, etc.)")
 	addCmd.Flags().StringVarP(&addQuery, "query", "q", "", "eBay search query (defaults to card name)")
+	addCmd.Flags().BoolVarP(&addBINOnly, "bin", "b", false, "Buy It Now listings only (skip auctions)")
 	_ = addCmd.MarkFlagRequired("max")
 }

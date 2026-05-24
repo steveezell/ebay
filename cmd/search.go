@@ -51,7 +51,7 @@ Use --card to search for a single card by name (partial match supported).`,
 			fmt.Printf("[%d/%d] %s\n      max $%.2f  |  condition: %s\n",
 				i+1, len(cards), card.Name, card.MaxPrice, cond)
 
-			listings, err := ebay.SearchListings(card.Query, card.MaxPrice, card.Condition)
+			listings, err := ebay.SearchListings(card.Query, card.MaxPrice, card.Condition, card.BINOnly)
 			if err != nil {
 				fmt.Printf("      Error: %v\n\n", err)
 				continue

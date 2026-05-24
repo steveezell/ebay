@@ -15,6 +15,7 @@ type Card struct {
 	Query     string    `yaml:"query"     json:"query"`
 	MaxPrice  float64   `yaml:"max_price" json:"max_price"`
 	Condition string    `yaml:"condition,omitempty" json:"condition"`
+	BINOnly   bool      `yaml:"bin_only,omitempty"  json:"bin_only"`
 	Notes     string    `yaml:"notes,omitempty"     json:"notes"`
 	Added     time.Time `yaml:"added"     json:"added"`
 }

@@ -61,6 +61,7 @@ func handleCards(w http.ResponseWriter, r *http.Request) {
 			Query     string  `json:"query"`
 			MaxPrice  float64 `json:"max_price"`
 			Condition string  `json:"condition"`
+			BINOnly   bool    `json:"bin_only"`
 			Notes     string  `json:"notes"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -90,6 +91,7 @@ func handleCards(w http.ResponseWriter, r *http.Request) {
 			Query:     query,
 			MaxPrice:  input.MaxPrice,
 			Condition: input.Condition,
+			BINOnly:   input.BINOnly,
 			Notes:     input.Notes,
 			Added:     time.Now(),
 		}
@@ -252,6 +254,17 @@ const uiHTML = `<!DOCTYPE html>
   }
 
   table { width: 100%; border-collapse: collapse; }
+  .bin-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    background: #2a3d5c;
+    color: #63b3ed;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+
   thead th {
     text-align: left;
     font-size: 0.75rem;
@@ -330,7 +343,7 @@ const uiHTML = `<!DOCTYPE html>
         </select>
       </div>
     </div>
-    <div class="form-row">
+    <div class="form-row three">
       <div>
         <label for="query">Search query <span style="color:#4a5568">(optional — defaults to card name)</span></label>
         <input id="query" type="text" placeholder="griffey new pinnacle artist proof 1997">
@@ -338,6 +351,12 @@ const uiHTML = `<!DOCTYPE html>
       <div>
         <label for="notes">Notes</label>
         <input id="notes" type="text" placeholder="AP /100, not mirror gold">
+      </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:2px">
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;margin:0">
+          <input id="binOnly" type="checkbox" style="width:auto;accent-color:#f6e05e">
+          <span style="font-size:0.875rem;color:#e2e8f0">Buy It Now only</span>
+        </label>
       </div>
     </div>
     <div class="form-actions">
@@ -380,8 +399,9 @@ function renderCards(cards) {
     const notes = c.notes ? '<div class="card-notes">' + esc(c.notes) + '</div>' : '';
     const queryNote = c.query && c.query !== c.name
       ? '<div class="card-notes">search: ' + esc(c.query) + '</div>' : '';
+    const binBadge = c.bin_only ? '<span class="bin-badge">BIN</span>' : '';
     return '<tr>' +
-      '<td><div class="card-name">' + esc(c.name) + '</div>' + notes + queryNote + '</td>' +
+      '<td><div class="card-name">' + esc(c.name) + binBadge + '</div>' + notes + queryNote + '</td>' +
       '<td><span class="price">$' + parseFloat(c.max_price).toFixed(2) + '</span></td>' +
       '<td><span class="condition ' + esc(cond) + '">' + esc(condLabel) + '</span></td>' +
       '<td><button class="btn btn-danger" onclick="removeCard(' + JSON.stringify(c.name) + ')">Remove</button></td>' +
@@ -398,6 +418,7 @@ async function addCard() {
   const condition = document.getElementById('condition').value;
   const query    = document.getElementById('query').value.trim();
   const notes    = document.getElementById('notes').value.trim();
+  const binOnly  = document.getElementById('binOnly').checked;
 
   if (!name) { showError('Card name is required.'); return; }
   if (!maxPrice || maxPrice <= 0) { showError('Enter a valid max price.'); return; }
@@ -407,7 +428,7 @@ async function addCard() {
     const res = await fetch('/api/cards', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, max_price: maxPrice, condition, query, notes })
+      body: JSON.stringify({ name, max_price: maxPrice, condition, query, notes, bin_only: binOnly })
     });
     const data = await res.json();
     if (!res.ok) { showError(data.error || 'Something went wrong.'); return; }
@@ -416,6 +437,7 @@ async function addCard() {
     document.getElementById('condition').value = '';
     document.getElementById('query').value = '';
     document.getElementById('notes').value = '';
+    document.getElementById('binOnly').checked = false;
     await loadCards();
   } catch (e) {
     showError('Could not reach the server.');

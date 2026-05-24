@@ -25,14 +25,18 @@ var listCmd = &cobra.Command{
 		}
 		fmt.Printf("Want list (%d cards) — saved to %s\n\n", len(wl.Cards), wantlist.DefaultPath())
 		tw := tabwriter.NewWriter(os.Stdout, 2, 4, 2, ' ', 0)
-		fmt.Fprintln(tw, "  NAME\tMAX PRICE\tCONDITION\tNOTES")
-		fmt.Fprintln(tw, "  ────\t─────────\t─────────\t─────")
+		fmt.Fprintln(tw, "  NAME\tMAX PRICE\tCONDITION\tLISTING\tNOTES")
+		fmt.Fprintln(tw, "  ────\t─────────\t─────────\t───────\t─────")
 		for i, c := range wl.Cards {
 			cond := c.Condition
 			if cond == "" {
 				cond = "any"
 			}
-			fmt.Fprintf(tw, "  %d. %s\t$%.2f\t%s\t%s\n", i+1, c.Name, c.MaxPrice, cond, c.Notes)
+			listing := "all"
+			if c.BINOnly {
+				listing = "BIN only"
+			}
+			fmt.Fprintf(tw, "  %d. %s\t$%.2f\t%s\t%s\t%s\n", i+1, c.Name, c.MaxPrice, cond, listing, c.Notes)
 		}
 		return tw.Flush()
 	},
