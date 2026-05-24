@@ -25,14 +25,14 @@ ebay-pp-cli doctor   # verify it worked
 ## Install card-hunt
 
 ```sh
-go install github.com/steveezell/ebay@latest
+go install github.com/steveezell/ebay/cmd/card-hunt@latest
 ```
 
 Or build from source:
 ```sh
 git clone https://github.com/steveezell/ebay
 cd ebay
-go build -o card-hunt .
+go build -o card-hunt ./cmd/card-hunt/
 ```
 
 ## Usage
