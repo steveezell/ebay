@@ -11,12 +11,12 @@ import (
 )
 
 type Card struct {
-	Name      string    `yaml:"name"`
-	Query     string    `yaml:"query"`
-	MaxPrice  float64   `yaml:"max_price"`
-	Condition string    `yaml:"condition,omitempty"` // new, used, refurb, parts
-	Notes     string    `yaml:"notes,omitempty"`
-	Added     time.Time `yaml:"added"`
+	Name      string    `yaml:"name"      json:"name"`
+	Query     string    `yaml:"query"     json:"query"`
+	MaxPrice  float64   `yaml:"max_price" json:"max_price"`
+	Condition string    `yaml:"condition,omitempty" json:"condition"`
+	Notes     string    `yaml:"notes,omitempty"     json:"notes"`
+	Added     time.Time `yaml:"added"     json:"added"`
 }
 
 type WantList struct {
