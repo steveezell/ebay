@@ -404,7 +404,7 @@ function renderCards(cards) {
       '<td><div class="card-name">' + esc(c.name) + binBadge + '</div>' + notes + queryNote + '</td>' +
       '<td><span class="price">$' + parseFloat(c.max_price).toFixed(2) + '</span></td>' +
       '<td><span class="condition ' + esc(cond) + '">' + esc(condLabel) + '</span></td>' +
-      '<td><button class="btn btn-danger" onclick="removeCard(' + JSON.stringify(c.name) + ')">Remove</button></td>' +
+      '<td><button class="btn btn-danger" onclick="removeCard(' + esc(JSON.stringify(c.name)) + ')">Remove</button></td>' +
       '</tr>';
   }).join('');
   el.innerHTML = '<table>' +
