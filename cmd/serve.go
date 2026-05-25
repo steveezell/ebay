@@ -404,7 +404,7 @@ function renderCards(cards) {
       '<td><div class="card-name">' + esc(c.name) + binBadge + '</div>' + notes + queryNote + '</td>' +
       '<td><span class="price">$' + parseFloat(c.max_price).toFixed(2) + '</span></td>' +
       '<td><span class="condition ' + esc(cond) + '">' + esc(condLabel) + '</span></td>' +
-      '<td><button class="btn btn-danger" onclick="removeCard(' + esc(JSON.stringify(c.name)) + ')">Remove</button></td>' +
+      '<td><button class="btn btn-danger" data-card="' + esc(c.name) + '">Remove</button></td>' +
       '</tr>';
   }).join('');
   el.innerHTML = '<table>' +
@@ -474,6 +474,12 @@ function esc(s) {
 // Submit on Enter in any input
 document.querySelectorAll('input').forEach(inp => {
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') addCard(); });
+});
+
+// Delegated remove handler — survives innerHTML replacement
+document.getElementById('listContainer').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-card]');
+  if (btn) removeCard(btn.dataset.card);
 });
 
 loadCards();
