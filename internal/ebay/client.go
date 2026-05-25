@@ -56,8 +56,6 @@ func conditionToCode(cond string) string {
 	}
 }
 
-// MatchesCondition returns true when a listing's condition matches the filter.
-// An empty filter matches everything.
 func MatchesCondition(listing Listing, filter string) bool {
 	if filter == "" {
 		return true
@@ -65,7 +63,6 @@ func MatchesCondition(listing Listing, filter string) bool {
 	return strings.Contains(strings.ToLower(listing.Condition), strings.ToLower(filter))
 }
 
-// SearchListings searches active eBay listings and returns those at or below maxPrice.
 func SearchListings(query string, maxPrice float64, condition string, binOnly bool) ([]Listing, error) {
 	args := []string{"listings", "--json", "--agent", "--nkw", query}
 	if maxPrice > 0 {
@@ -88,7 +85,6 @@ func SearchListings(query string, maxPrice float64, condition string, binOnly bo
 		return nil, fmt.Errorf("parse listings: %w", parseErr)
 	}
 
-	// Post-filter by condition since the CLI doesn't always apply it server-side.
 	if condition != "" {
 		var filtered []Listing
 		for _, l := range listings {
@@ -101,14 +97,12 @@ func SearchListings(query string, maxPrice float64, condition string, binOnly bo
 	return listings, nil
 }
 
-// GetComps returns sold-listing statistics for a query over the last 90 days.
 func GetComps(query string) (*CompStats, error) {
 	out, stderr, err := run("ebay-pp-cli", "comp", "--json", "--agent", query)
 	if err != nil {
 		return nil, wrapError("comp", stderr, err)
 	}
 
-	// comp returns CompStats directly (not wrapped in a results envelope).
 	var stats CompStats
 	if jsonErr := json.Unmarshal(out, &stats); jsonErr != nil {
 		return nil, fmt.Errorf("parse comp response: %w", jsonErr)
@@ -116,7 +110,6 @@ func GetComps(query string) (*CompStats, error) {
 	return &stats, nil
 }
 
-// parseListings handles both the wrapped {"results":[...]} envelope and a bare array.
 func parseListings(data []byte) ([]Listing, error) {
 	var envelope struct {
 		Results []Listing `json:"results"`
@@ -145,7 +138,6 @@ func wrapError(command string, stderr []byte, err error) error {
 	if msg == "" {
 		return fmt.Errorf("ebay-pp-cli %s: %w", command, err)
 	}
-	// Surface the first non-empty line from stderr (it's usually the most useful hint).
 	first := strings.SplitN(msg, "\n", 2)[0]
 	return fmt.Errorf("%s\n  (run 'ebay-pp-cli doctor' if auth is the issue)", first)
 }

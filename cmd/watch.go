@@ -78,7 +78,6 @@ Press Ctrl+C to stop watching.`,
 			saveSeen(seen)
 		}
 
-		// Run immediately on start.
 		runCheck()
 
 		ticker := time.NewTicker(watchInterval)

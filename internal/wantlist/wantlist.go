@@ -67,8 +67,6 @@ func (w *WantList) Add(card Card) error {
 	return w.Save()
 }
 
-// Remove removes the first card whose name contains the given substring (case-insensitive).
-// Returns the removed card name and true on success.
 func (w *WantList) Remove(nameSubstr string) (string, bool) {
 	lower := strings.ToLower(nameSubstr)
 	for i, c := range w.Cards {

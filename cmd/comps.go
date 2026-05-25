@@ -90,14 +90,12 @@ func printCompStats(s *ebay.CompStats, maxPrice float64) {
 	fmt.Println(line1)
 	fmt.Println(line2)
 
-	// Visual price bar comparing budget to market
 	if maxPrice > 0 && s.Max > 0 {
 		fmt.Println()
 		printPriceBar(s.Min, s.P25, s.Median, s.P75, s.Max, maxPrice)
 	}
 }
 
-// printPriceBar draws a simple ASCII bar showing where the budget cap sits vs sold prices.
 func printPriceBar(min, p25, median, p75, max, cap float64) {
 	width := 40
 	mark := func(val float64) int {
@@ -115,16 +113,13 @@ func printPriceBar(min, p25, median, p75, max, cap float64) {
 	}
 
 	bar := []rune(strings.Repeat("─", width+1))
-	// IQR band
 	for i := mark(p25); i <= mark(p75) && i <= width; i++ {
 		bar[i] = '▓'
 	}
-	// Median
 	mPos := mark(median)
 	if mPos >= 0 && mPos <= width {
 		bar[mPos] = '◆'
 	}
-	// Cap
 	capPos := mark(cap)
 	label := "cap"
 	if cap < min {
